@@ -16,6 +16,11 @@
             background: white;
             padding: 20px;
             box-shadow: 0 0 10px gray;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .grid {
             display: grid;
@@ -49,6 +54,7 @@
             font-size: 16px;
             transition: all 0.3s ease;
             border-radius: 5px;
+            animation: fadeIn 1.5s ease-in-out;
         }
         button:hover {
             background: darkgray;
@@ -57,20 +63,19 @@
         button:active {
             transform: scale(0.95);
         }
-        #result-message {
+        #result-message, #welcome-message, #error-message {
             font-size: 24px;
             font-weight: bold;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        #result-message {
             color: green;
             display: none;
         }
         #welcome-message {
-            font-size: 24px;
-            font-weight: bold;
             color: blue;
         }
         #error-message {
-            font-size: 24px;
-            font-weight: bold;
             color: red;
             display: none;
         }
@@ -81,6 +86,7 @@
         <h1>JULIA'S MATH WEBSITE</h1>
         <p id="welcome-message">Website is required for Julia</p>
         <p id="error-message">Where are your answers?</p>
+        <p id="cheat-message" style="color: red; font-size: 24px; font-weight: bold; display: none;">Nuh uh uh, that's cheating</p>
         <div class="grid" id="questions-container"></div>
         <p id="result-message">All Correct!</p>
         <div class="buttons">
@@ -95,10 +101,14 @@
         <p>created by: Josiah & ChatGPT</p>
     </div>
     <script>
+        let answersShown = false;
+        
         function generateQuestions(operation) {
             document.getElementById("welcome-message").style.display = "none";
             document.getElementById("result-message").style.display = "none";
             document.getElementById("error-message").style.display = "none";
+            document.getElementById("cheat-message").style.display = "none";
+            answersShown = false;
             const container = document.getElementById("questions-container");
             container.innerHTML = "";
             for (let i = 0; i < 10; i++) {
@@ -123,10 +133,13 @@
             document.getElementById("result-message").style.display = "none";
             document.getElementById("welcome-message").style.display = "block";
             document.getElementById("error-message").style.display = "none";
+            document.getElementById("cheat-message").style.display = "none";
+            answersShown = false;
         }
 
         function showAnswers() {
             document.querySelectorAll("input").forEach(input => input.value = input.dataset.answer);
+            answersShown = true;
         }
 
         function checkAnswers() {
@@ -136,6 +149,10 @@
                 return;
             }
             document.getElementById("error-message").style.display = "none";
+            if (answersShown) {
+                document.getElementById("cheat-message").style.display = "block";
+                return;
+            }
             let allCorrect = true;
             inputs.forEach(input => {
                 if (input.value == input.dataset.answer) {
